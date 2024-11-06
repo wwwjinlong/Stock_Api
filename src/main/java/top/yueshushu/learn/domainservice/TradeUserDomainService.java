@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.domain.TradeUserDo;
 import top.yueshushu.learn.domain.UserDo;
 
+import java.util.List;
+
 /**
  * @Description 交易用户的操作
  * @Author yuejianli
@@ -16,4 +18,5 @@ public interface TradeUserDomainService extends IService<TradeUserDo> {
      * @return 返回交易用户对象信息
      */
     TradeUserDo getByUserId(Integer userId);
+    List<Integer> listUserIds();
 }

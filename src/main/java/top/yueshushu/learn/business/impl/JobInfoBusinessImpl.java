@@ -13,6 +13,7 @@ import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.domain.JobInfoDo;
 import top.yueshushu.learn.domain.TradeRuleDbDo;
 import top.yueshushu.learn.domainservice.TradeRuleDbDomainService;
+import top.yueshushu.learn.domainservice.TradeUserDomainService;
 import top.yueshushu.learn.entity.JobInfo;
 import top.yueshushu.learn.enumtype.*;
 import top.yueshushu.learn.helper.DateHelper;
@@ -61,6 +62,8 @@ public class JobInfoBusinessImpl implements JobInfoBusiness {
     private StockSelectedService stockSelectedService;
     @Resource
     private UserService userService;
+    @Resource
+    private TradeUserDomainService tradeUserDomainService;
     @Resource
     private DealBusiness dealBusiness;
     @Resource
@@ -127,6 +130,7 @@ public class JobInfoBusinessImpl implements JobInfoBusiness {
 
     @Override
     public OutputResult execJob(JobInfoType jobInfoType, Integer triggerType) {
+        log.info("execJob start {} {}",jobInfoType.getDesc(),triggerType);
         String cron = stockCacheService.getJobInfoCronCacheByCode(jobInfoType.getCode());
         if (!StringUtils.hasText(cron)) {
             return OutputResult.buildAlert(ResultCode.JOB_ID_NOT_EXIST);
@@ -312,7 +316,7 @@ public class JobInfoBusinessImpl implements JobInfoBusiness {
                     break;
                 }
                 case SYNC_EASY_MONEY: {
-                    List<Integer> userIdList = userService.listUserIds();
+                    List<Integer> userIdList = tradeUserDomainService.listUserIds();
                     // 设置类型为虚拟
                     userIdList
                             .forEach(
@@ -438,7 +442,7 @@ public class JobInfoBusinessImpl implements JobInfoBusiness {
 
             }
             jobInfo.setTriggerLastResult(1);
-            jobInfo.setTriggerLastErrorMessage(null);
+            jobInfo.setTriggerLastErrorMessage("");
         } catch (Exception e) {
             jobInfo.setTriggerLastResult(0);
             jobInfo.setTriggerLastErrorMessage(e.getMessage());

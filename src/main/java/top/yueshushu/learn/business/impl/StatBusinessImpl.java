@@ -134,17 +134,19 @@ public class StatBusinessImpl implements StatBusiness {
                             weekIndex
                     ).getDesc()
             );
-            BigDecimal bigDecimal = BigDecimalUtil.subBigDecimal(
-                    lastVo.getClosingPrice(),
-                    tempVo.getClosingPrice()
-            );
-            stockWeekStatInfoVo.setRangePrice(
-                    BigDecimalUtil.toString(bigDecimal)
-            );
-            String proportion = BigDecimalUtil.divPattern(
-                    bigDecimal, tempVo.getClosingPrice()
-            );
-            stockWeekStatInfoVo.setRangeProportion(proportion);
+            if (tempVo != null) {
+                BigDecimal bigDecimal = BigDecimalUtil.subBigDecimal(
+                        lastVo.getClosingPrice(),
+                        tempVo.getClosingPrice()
+                );
+                stockWeekStatInfoVo.setRangePrice(
+                        BigDecimalUtil.toString(bigDecimal)
+                );
+                String proportion = BigDecimalUtil.divPattern(
+                        bigDecimal, tempVo.getClosingPrice()
+                );
+                stockWeekStatInfoVo.setRangeProportion(proportion);
+            }
             weekIndex = weekIndex + 1;
             stockWeekStatInfoVoList.add(stockWeekStatInfoVo);
         }

@@ -89,6 +89,7 @@ public class TradeMoneyServiceImpl implements TradeMoneyService {
         try {
             tradeResultVo = getAssetsResponse(tradeMoneyRo.getUserId());
         } catch (Exception e) {
+            log.error("realInfo", e);
             throw new TradeUserException("无权限查询真实的资金");
         }
         if (!tradeResultVo.getSuccess()) {

@@ -82,7 +82,7 @@ public class LogAspect {
 
             long cost = System.currentTimeMillis() - startMs;
             logInfo.insert(0, "cost(ms): " + cost + "; ");
-            logInfo.append("    -----    response: ").append(toJsonString(result));
+//            logInfo.append("    -----    response: ").append(toJsonString(result));
 
             log.info(logInfo.toString());
             return result;

@@ -8,6 +8,7 @@ import top.yueshushu.learn.domainservice.TradeUserDomainService;
 import top.yueshushu.learn.mapper.TradeUserDoMapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description TODO
@@ -28,5 +29,14 @@ public class TradeUserDomainServiceImpl extends ServiceImpl<TradeUserDoMapper, T
             return null;
         }
         return list.get(0);
+    }
+
+    @Override
+    public List<Integer> listUserIds() {
+        return this.lambdaQuery()
+                .list()
+                .stream().map(
+                        TradeUserDo::getUserId
+                ).collect(Collectors.toList());
     }
 }
