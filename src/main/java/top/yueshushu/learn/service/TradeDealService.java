@@ -66,6 +66,8 @@ public interface TradeDealService {
      */
     void syncRealDealByUserId(Integer userId, List<TradeDealVo> tradeDealVoList);
 
+    void syncHisRealDealByUserId(Integer userId, List<TradeDealVo> tradeDealVoList);
+
     /**
      * 同步成交信息到数据库
      *
@@ -73,4 +75,6 @@ public interface TradeDealService {
      * @param mockType 类型
      */
     void syncEasyMoneyToDB(Integer userId, MockType mockType) throws TradeUserException;
+
+    void syncEasyHistoryToDB(Integer userId, String[] dates, MockType mockType) throws TradeUserException;
 }

@@ -3,11 +3,18 @@ package top.yueshushu.learn.business.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import top.yueshushu.learn.business.*;
+import top.yueshushu.learn.business.AutoLoginBusiness;
+import top.yueshushu.learn.business.BKBusiness;
+import top.yueshushu.learn.business.BuyNewStockBusiness;
+import top.yueshushu.learn.business.DealBusiness;
+import top.yueshushu.learn.business.JobInfoBusiness;
+import top.yueshushu.learn.business.PriceImageBusiness;
+import top.yueshushu.learn.business.StockPoolBusiness;
+import top.yueshushu.learn.business.TradePositionBusiness;
 import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.domain.JobInfoDo;
@@ -15,7 +22,13 @@ import top.yueshushu.learn.domain.TradeRuleDbDo;
 import top.yueshushu.learn.domainservice.TradeRuleDbDomainService;
 import top.yueshushu.learn.domainservice.TradeUserDomainService;
 import top.yueshushu.learn.entity.JobInfo;
-import top.yueshushu.learn.enumtype.*;
+import top.yueshushu.learn.enumtype.ConfigCodeType;
+import top.yueshushu.learn.enumtype.DBStockType;
+import top.yueshushu.learn.enumtype.DataFlagType;
+import top.yueshushu.learn.enumtype.EntrustType;
+import top.yueshushu.learn.enumtype.FunctionUseType;
+import top.yueshushu.learn.enumtype.JobInfoType;
+import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.helper.DateHelper;
 import top.yueshushu.learn.message.weixin.service.WeChatService;
 import top.yueshushu.learn.mode.ro.BuyRo;
@@ -23,7 +36,18 @@ import top.yueshushu.learn.mode.ro.DealRo;
 import top.yueshushu.learn.mode.ro.JobInfoRo;
 import top.yueshushu.learn.mode.vo.ConfigVo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.service.*;
+import top.yueshushu.learn.service.ConfigService;
+import top.yueshushu.learn.service.HolidayCalendarService;
+import top.yueshushu.learn.service.JobInfoService;
+import top.yueshushu.learn.service.StockBigDealService;
+import top.yueshushu.learn.service.StockCrawlerService;
+import top.yueshushu.learn.service.StockSelectedService;
+import top.yueshushu.learn.service.TradeDealService;
+import top.yueshushu.learn.service.TradeEntrustService;
+import top.yueshushu.learn.service.TradeMoneyService;
+import top.yueshushu.learn.service.TradePositionService;
+import top.yueshushu.learn.service.TradeStrategyService;
+import top.yueshushu.learn.service.UserService;
 import top.yueshushu.learn.service.cache.StockCacheService;
 import top.yueshushu.learn.util.CronExpression;
 import top.yueshushu.learn.util.MyDateUtil;
@@ -132,7 +156,7 @@ public class JobInfoBusinessImpl implements JobInfoBusiness {
     public OutputResult execJob(JobInfoType jobInfoType, Integer triggerType) {
         log.info("execJob start {} {}",jobInfoType.getDesc(),triggerType);
         String cron = stockCacheService.getJobInfoCronCacheByCode(jobInfoType.getCode());
-        if (!StringUtils.hasText(cron)) {
+        if (!StringUtils.isNotBlank(cron)) {
             return OutputResult.buildAlert(ResultCode.JOB_ID_NOT_EXIST);
         }
         //是获取股票实时价格的任务，并且是自动运行。 非时间，不执行。
@@ -192,7 +216,7 @@ public class JobInfoBusinessImpl implements JobInfoBusiness {
                     break;
                 }
                 case STOCK_PRICE_SAVE: {
-                    if (!StringUtils.hasText(param)) {
+                    if (!StringUtils.isNotBlank(param)) {
                         break;
                     }
                     if (isEndStockMorningTime() || isEndStockPriceTime()) {
@@ -333,10 +357,24 @@ public class JobInfoBusinessImpl implements JobInfoBusiness {
                                             tradeDealService.syncEasyMoneyToDB(userId, MockType.REAL);
                                             sleepTime(200);
                                         } catch (Exception e) {
-
+                                            log.error("SYNC_EASY_MONEY 异常信息", e);
                                         }
                                     }
                             );
+                    break;
+                }
+                case SYNC_DEAL_HISTORY: {
+                    List<Integer> userIdList = tradeUserDomainService.listUserIds();
+                    String[] dates = StringUtils.isBlank(param) ? null : param.split(JOB_PARAM_SPLIT);
+                    if (dates != null && dates.length > 0) {
+                        userIdList.forEach(userId -> {
+                            try {
+                                tradeDealService.syncEasyHistoryToDB(userId, dates, MockType.REAL);
+                            } catch (Exception e) {
+                                log.error(" SYNC_HISTORY 异常信息", e);
+                            }
+                        });
+                    }
                     break;
                 }
                 case BUY_NEW_STOCK: {

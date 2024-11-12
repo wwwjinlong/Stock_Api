@@ -84,7 +84,7 @@ public class AutoLoginBusinessImpl implements AutoLoginBusiness {
             String message = MessageFormat.format(
                     "用户 :{0} 于 {1} 登录信息失效，请尽快重新登录", user.getName(), DateUtil.now()
             );
-            weChatService.sendTextMessage(user.getId(), message);
+            weChatService.pushMessage(message);
         }
         // 不成功，才进行自动登录操作。
         String base64Url = tradeMethodBusiness.yzm(userId).getData();

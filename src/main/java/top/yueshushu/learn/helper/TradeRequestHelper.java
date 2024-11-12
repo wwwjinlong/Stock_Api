@@ -8,8 +8,29 @@ import org.apache.commons.beanutils.BeanMap;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import top.yueshushu.learn.api.TradeResultVo;
-import top.yueshushu.learn.api.request.*;
-import top.yueshushu.learn.api.response.*;
+import top.yueshushu.learn.api.request.AuthenticationRequest;
+import top.yueshushu.learn.api.request.BaseTradeListRequest;
+import top.yueshushu.learn.api.request.BaseTradeRequest;
+import top.yueshushu.learn.api.request.GetCanBuyNewStockListV3Request;
+import top.yueshushu.learn.api.request.GetDealDataRequest;
+import top.yueshushu.learn.api.request.GetHisDealDataRequest;
+import top.yueshushu.learn.api.request.GetHisOrdersDataRequest;
+import top.yueshushu.learn.api.request.GetOrdersDataRequest;
+import top.yueshushu.learn.api.request.GetStockListRequest;
+import top.yueshushu.learn.api.request.RevokeRequest;
+import top.yueshushu.learn.api.request.SubmitBatTradeV2Request;
+import top.yueshushu.learn.api.request.SubmitRequest;
+import top.yueshushu.learn.api.response.AuthenticationResponse;
+import top.yueshushu.learn.api.response.BaseTradeResponse;
+import top.yueshushu.learn.api.response.GetCanBuyNewStockListV3Response;
+import top.yueshushu.learn.api.response.GetDealDataResponse;
+import top.yueshushu.learn.api.response.GetHisDealDataResponse;
+import top.yueshushu.learn.api.response.GetHisOrdersDataResponse;
+import top.yueshushu.learn.api.response.GetOrdersDataResponse;
+import top.yueshushu.learn.api.response.GetStockListResponse;
+import top.yueshushu.learn.api.response.RevokeResponse;
+import top.yueshushu.learn.api.response.SubmitBatTradeV2Response;
+import top.yueshushu.learn.api.response.SubmitResponse;
 import top.yueshushu.learn.api.responseparse.ResponseParser;
 import top.yueshushu.learn.config.TradeClient;
 import top.yueshushu.learn.domain.TradeUserDo;
@@ -21,7 +42,11 @@ import top.yueshushu.learn.service.impl.TradeApiServiceImpl;
 import top.yueshushu.learn.util.TradeUtil;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -164,13 +189,17 @@ public class TradeRequestHelper {
      *
      * @param userId 用户编号
      */
-    public TradeResultVo<GetHisDealDataResponse> listRealHistoryDeal(Integer userId) {
 
+
+    /**
+     * 获取真实的历史成交响应的信息
+     *
+     * @param userId 用户编号
+     */
+    public TradeResultVo<GetHisDealDataResponse> listRealHistoryDeal(Integer userId, String start, String end) {
         GetHisDealDataRequest request = new GetHisDealDataRequest(userId);
-        request.setEt(DateUtil.format(new Date(), "yyyy-MM-dd"));
-        Date et = new Date();
-        et.setTime(et.getTime() - 7 * 24 * 3600 * 1000);
-        request.setSt(DateUtil.format(et, "yyyy-MM-dd"));
+        request.setEt(start);
+        request.setSt(end);
         return componentAndSendReqeust(request, new TypeReference<GetHisDealDataResponse>() {
         });
     }

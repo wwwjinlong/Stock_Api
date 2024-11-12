@@ -177,7 +177,7 @@ public class TradeDealServiceImpl implements TradeDealService {
         //获取响应信息
         TradeResultVo<GetHisDealDataResponse> tradeResultVo;
         try {
-            tradeResultVo = tradeRequestHelper.listRealHistoryDeal(tradeDealRo.getUserId());
+            tradeResultVo = tradeRequestHelper.listRealHistoryDeal(tradeDealRo.getUserId(), tradeDealRo.getStartDate(), tradeDealRo.getEndDate());
         } catch (Exception e) {
             throw new TradeUserException("无权限查询真实的 历史成交单信息");
         }
@@ -218,6 +218,35 @@ public class TradeDealServiceImpl implements TradeDealService {
 
     @Override
     public void syncRealDealByUserId(Integer userId, List<TradeDealVo> tradeDealVoList) {
+        if (CollectionUtils.isEmpty(tradeDealVoList)) {
+            return;
+        }
+        //先将当前用户的今日委托信息全部删除
+        TradeDealQueryDto tradeDealQueryDto = new TradeDealQueryDto();
+        tradeDealQueryDto.setUserId(userId);
+        tradeDealQueryDto.setMockType(MockType.REAL.getCode());
+        tradeDealQueryDto.setDealDate(tradeDealVoList.get(0).getDealDate());
+        tradeDealDomainService.deleteToDayByQuery(tradeDealQueryDto);
+        List<TradeDealDo> entrustDoList = tradeDealVoList.stream().map(
+                n -> {
+                    TradeDealDo tradeDealDo =
+                            tradeDealAssembler.entityToDo(tradeDealAssembler.voToEntity(n));
+                    tradeDealDo.setUserId(userId);
+                    tradeDealDo.setMockType(MockType.REAL.getCode());
+                    return tradeDealDo;
+                }
+        ).collect(Collectors.toList());
+        tradeDealDomainService.saveBatch(entrustDoList);
+    }
+
+    /**
+     * 同步历史成交记录
+     *
+     * @param userId
+     * @param tradeDealVoList
+     */
+    @Override
+    public void syncHisRealDealByUserId(Integer userId, List<TradeDealVo> tradeDealVoList) {
         //先将当前用户的今日委托信息全部删除
         TradeDealQueryDto tradeDealQueryDto = new TradeDealQueryDto();
         tradeDealQueryDto.setUserId(userId);
@@ -226,7 +255,7 @@ public class TradeDealServiceImpl implements TradeDealService {
         tradeDealQueryDto.setDealDate(now);
         tradeDealDomainService.deleteToDayByQuery(tradeDealQueryDto);
         if (CollectionUtils.isEmpty(tradeDealVoList)) {
-            return ;
+            return;
         }
         List<TradeDealDo> entrustDoList = tradeDealVoList.stream().map(
                 n -> {
@@ -240,6 +269,7 @@ public class TradeDealServiceImpl implements TradeDealService {
         tradeDealDomainService.saveBatch(entrustDoList);
     }
 
+
     @Override
     public void syncEasyMoneyToDB(Integer userId, MockType mockType) throws TradeUserException {
         TradeDealRo tradeDealRo = new TradeDealRo();
@@ -248,6 +278,19 @@ public class TradeDealServiceImpl implements TradeDealService {
 
         // 将数据保存下来
         tradeCacheService.buildRealEasyMoneyCache(TradeRealValueType.TRADE_DEAL, tradeDealRo.getUserId(), tradeDealVoList, 36000);
+        syncRealDealByUserId(userId, tradeDealVoList);
+    }
+
+    // 同步历史数据
+    @Override
+    public void syncEasyHistoryToDB(Integer userId, String[] dates, MockType mockType) throws TradeUserException {
+        TradeDealRo tradeDealRo = new TradeDealRo();
+        tradeDealRo.setUserId(userId);
+        tradeDealRo.setStartDate(dates[0]);
+        tradeDealRo.setEndDate(dates[1]);
+        List<TradeDealVo> tradeDealVoList = realHistoryList(tradeDealRo);
+
+        // 将数据保存下来
         syncRealDealByUserId(userId, tradeDealVoList);
     }
 

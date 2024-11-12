@@ -24,7 +24,7 @@
         id, code, name, curr_date,all_amount, use_amount, avg_price, price, all_money, float_money, float_proportion, user_id, mock_type
     </sql>
     <delete id="deleteByUserIdAndMockTypeAndDate">
-        delete from trade_position_history t
+        delete from trade_position_history
         where user_id = #{userId} and mock_type =#{mockType} and date_format(curr_date,'%Y%m%d')=date_format( #{currDate,jdbcType=TIMESTAMP},'%Y%m%d')
     </delete>
     <select id="listPositionHistoryAndDateDesc" resultType="top.yueshushu.learn.domain.TradePositionHistoryDo">

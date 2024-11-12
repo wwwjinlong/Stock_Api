@@ -1,6 +1,7 @@
 package top.yueshushu.learn.controller;
 
 
+import cn.hutool.core.date.DateUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.util.PageUtil;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,6 +79,11 @@ public class TradeDealController extends BaseController {
         if (MockType.MOCK.equals(mockType)) {
             return tradeDealBusiness.mockHistoryList(tradeDealRo);
         }
+
+        tradeDealRo.setStartDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
+        Date et = new Date();
+        et.setTime(et.getTime() - 7 * 24 * 3600 * 1000);
+        tradeDealRo.setEndDate(DateUtil.format(et, "yyyy-MM-dd"));
         return tradeDealBusiness.realHistoryList(tradeDealRo);
     }
 }

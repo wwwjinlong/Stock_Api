@@ -3,6 +3,8 @@ package top.yueshushu.learn.mode.dto;
 import cn.hutool.core.date.DateTime;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @Description 股票交易查询对象
  * @Author yuejianli
@@ -12,7 +14,7 @@ import lombok.Data;
 public class TradeDealQueryDto {
     private Integer userId;
     private Integer mockType;
-    private DateTime dealDate;
+    private Date dealDate;
     private Integer dealType;
     /**
      * 开始成交时间
