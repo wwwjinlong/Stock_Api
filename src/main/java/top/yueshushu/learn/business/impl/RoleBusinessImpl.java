@@ -13,8 +13,8 @@ import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.RoleService;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,7 +76,7 @@ public class RoleBusinessImpl implements RoleBusiness {
         roleMenuDomainService.removeByRoleId(roleRo.getId());
 
         // 进行配置查询
-        LocalDateTime now = LocalDateTime.now();
+        Date now = new Date();
         List<RoleMenuDo> roleMenuDoList = roleRo.getMenuIdList().stream().map(
                 n -> {
                     RoleMenuDo roleMenuDo = new RoleMenuDo();

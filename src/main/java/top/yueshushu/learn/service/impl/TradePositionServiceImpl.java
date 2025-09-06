@@ -1,7 +1,6 @@
 package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -27,12 +26,8 @@ import top.yueshushu.learn.service.TradePositionService;
 import top.yueshushu.learn.util.BigDecimalUtil;
 
 import javax.annotation.Resource;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,27 +76,23 @@ public class TradePositionServiceImpl implements TradePositionService {
     }
 
     @Override
-    public void savePositionHistory(Integer userId, MockType mock, Date currentDate) {
+    public void savePositionHistory(Integer userId, MockType mock, DateTime currentDate) {
         //1. 将今天的记录删除掉
-        DateTime handlerDate = DateUtil.date(currentDate);
         tradePositionHistoryDomainService.deleteByUserIdAndMockTypeAndDate(
-                userId, mock.getCode(), handlerDate
+                userId, mock.getCode(), currentDate
         );
         //查看当前的持仓信息
         List<TradePositionDo> tradePositionDoList = tradePositionDomainService.listByUserIdAndMockTypeAndCode(
-                userId, mock.getCode(), null);
+                userId, mock.getCode(), currentDate);
         // 进行保存
         if (CollectionUtils.isEmpty(tradePositionDoList)) {
             return;
         }
-        Instant instant = currentDate.toInstant();
-        ZoneId zoneId = ZoneId.systemDefault();
-        LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
         List<TradePositionHistoryDo> tradePositionHistoryDoList = tradePositionDoList.stream().map(
                 n -> {
                     TradePositionHistoryDo tradePositionHistoryDo =
                             tradePositionAssembler.doToHisDo(n);
-                    tradePositionHistoryDo.setCurrDate(localDateTime);
+                    tradePositionHistoryDo.setCurrDate(currentDate);
                     return tradePositionHistoryDo;
                 }
         ).collect(Collectors.toList());
@@ -219,7 +210,7 @@ public class TradePositionServiceImpl implements TradePositionService {
 
         List<TradePositionDo> tradePositionDoList =
                 tradePositionDomainService.listByUserIdAndMockTypeAndCode(tradePositionRo.getUserId(),
-                        tradePositionRo.getMockType(),null);
+                        tradePositionRo.getMockType(), "");
         if (CollectionUtils.isEmpty(tradePositionDoList)){
             return OutputResult.buildSucc(Collections.EMPTY_LIST);
         }

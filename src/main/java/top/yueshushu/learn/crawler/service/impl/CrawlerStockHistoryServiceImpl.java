@@ -21,8 +21,6 @@ import top.yueshushu.learn.mode.ro.StockRo;
 import top.yueshushu.learn.response.OutputResult;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -86,14 +84,8 @@ public class CrawlerStockHistoryServiceImpl implements CrawlerStockHistoryServic
            stockHistoryCsvInfoList.forEach(
                    n->{
                        if (!existDateList.contains(n.getCurrDate())){
-                           StockHistoryDo stockHistoryDo = stockHistoryAssembler.csvInfoToDo(
-                                   n
-                           );
-                           stockHistoryDo.setCurrDate(
-                                   DateUtil.parseDate(
-                                           n.getCurrDate()
-                                   ).toLocalDateTime()
-                           );
+                           StockHistoryDo stockHistoryDo = stockHistoryAssembler.csvInfoToDo(n);
+                           stockHistoryDo.setCurrDate(DateUtil.parseDate(n.getCurrDate()));
                            stockHistoryDoList.add(stockHistoryDo);
                        }
                    }
@@ -118,16 +110,13 @@ public class CrawlerStockHistoryServiceImpl implements CrawlerStockHistoryServic
            // 上一个交易日的数据查询出来了。 进行同步
            List<StockHistoryDo> stockHistoryDoList = new ArrayList<>();
 
-           ZoneId zoneId = ZoneId.systemDefault();
-           LocalDateTime localDateTime = beforeLastWorking.toInstant().atZone(zoneId).toLocalDateTime();
-
            stockHistoryCsvInfoList.forEach(
                    n -> {
                        StockHistoryDo stockHistoryDo = stockHistoryAssembler.csvInfoToDo(
                                n
                        );
                        stockHistoryDo.setCurrDate(
-                               localDateTime
+                               beforeLastWorking
                        );
                        stockHistoryDoList.add(stockHistoryDo);
                    }
@@ -165,14 +154,11 @@ public class CrawlerStockHistoryServiceImpl implements CrawlerStockHistoryServic
             // 上一个交易日的数据查询出来了。 进行同步
             List<StockHistoryDo> stockHistoryDoList = new ArrayList<>();
 
-            ZoneId zoneId = ZoneId.systemDefault();
-            LocalDateTime localDateTime = beforeLastWorking.toInstant().atZone(zoneId).toLocalDateTime();
-
             txStockHistoryInfoList.forEach(
                     n -> {
                         StockHistoryDo stockHistoryDo = stockHistoryAssembler.txInfoToDo(n);
                         stockHistoryDo.setCurrDate(
-                                localDateTime
+                                beforeLastWorking
                         );
                         stockHistoryDoList.add(stockHistoryDo);
                     }
@@ -215,10 +201,8 @@ public class CrawlerStockHistoryServiceImpl implements CrawlerStockHistoryServic
             if (txStockHistoryInfo == null) {
                 continue;
             }
-            ZoneId zoneId = ZoneId.systemDefault();
-            LocalDateTime localDateTime = beforeLastWorking.toInstant().atZone(zoneId).toLocalDateTime();
             StockHistoryDo stockHistoryDo = stockHistoryAssembler.txInfoToDo(txStockHistoryInfo);
-            stockHistoryDo.setCurrDate(localDateTime);
+            stockHistoryDo.setCurrDate(beforeLastWorking);
             stockHistoryDoList.add(stockHistoryDo);
         }
         log.info("指数集合{}在 东方财富网站同步最近的股票记录,共需要同步有{}条", pointCodeList, stockHistoryDoList.size());

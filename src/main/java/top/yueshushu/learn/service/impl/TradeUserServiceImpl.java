@@ -21,7 +21,7 @@ import top.yueshushu.learn.util.RSAUtil;
 import top.yueshushu.learn.util.RedisUtil;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -77,7 +77,7 @@ public class TradeUserServiceImpl implements TradeUserService {
         }
         tradeUser.setCookie(response.getCookie());
         tradeUser.setValidateKey(response.getValidateKey());
-        tradeUser.setUpdateTime(LocalDateTime.now());
+        tradeUser.setUpdateTime(new Date());
         //将密码还原
         tradeUser.setPassword(oldPassword);
         tradeUser.setAccount(oldAccount);
@@ -102,8 +102,8 @@ public class TradeUserServiceImpl implements TradeUserService {
             tradeUserDo.setAccount("");
             tradeUserDo.setPassword("");
             tradeUserDo.setUserId(userId);
-            tradeUserDo.setCreateTime(LocalDateTime.now());
-            tradeUserDo.setUpdateTime(LocalDateTime.now());
+            tradeUserDo.setCreateTime(new Date());
+            tradeUserDo.setUpdateTime(new Date());
             tradeUserDo.setFlag(DataFlagType.NORMAL.getCode());
             // 进行保存
             tradeUserDomainService.save(tradeUserDo);

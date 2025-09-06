@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
@@ -103,5 +104,9 @@ public class TradePositionDo implements Serializable {
     @TableField("mock_type")
     private Integer mockType;
 
-
+    /**
+     * 更新时间
+     */
+    @TableField("update_time")
+    private Date updateTime;
 }

@@ -8,7 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
+
 
 /**
  * <p>
@@ -64,7 +65,7 @@ public class JobInfoDo implements Serializable {
      * 更新时间
      */
     @TableField("update_time")
-    private LocalDateTime updateTime;
+    private Date updateTime;
     /**
      * 任务cron表达式
      */
@@ -86,7 +87,7 @@ public class JobInfoDo implements Serializable {
      * 上次触发的时间
      */
     @TableField("trigger_last_time")
-    private LocalDateTime triggerLastTime;
+    private Date triggerLastTime;
 
     /**
      * 上次触发的结果 1为正常 0为失败
@@ -105,7 +106,7 @@ public class JobInfoDo implements Serializable {
      * 下次触发的时间
      */
     @TableField("trigger_next_time")
-    private LocalDateTime triggerNextTime;
+    private Date triggerNextTime;
     /**
      * 1为正常 0为删除
      */

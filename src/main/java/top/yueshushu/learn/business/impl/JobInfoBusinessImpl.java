@@ -1,5 +1,6 @@
 package top.yueshushu.learn.business.impl;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -243,15 +244,12 @@ public class JobInfoBusinessImpl implements JobInfoBusiness {
                     //设置类型为虚拟
                     userIdList.parallelStream().forEach(
                             userId -> {
-                                tradePositionService.savePositionHistory(
-                                        userId, MockType.MOCK, DateUtil.date()
-                                );
-                                tradePositionService.savePositionHistory(
-                                        userId, MockType.REAL, DateUtil.date()
-                                );
+                                DateTime begin = DateUtil.beginOfDay(new Date());
+                                tradePositionService.savePositionHistory(userId, MockType.MOCK, begin);
+                                tradePositionService.savePositionHistory(userId, MockType.REAL, begin);
                                 // 对金额进行处理
-                                tradeMoneyService.saveMoneyHistory(userId, MockType.MOCK, DateUtil.date());
-                                tradeMoneyService.saveMoneyHistory(userId, MockType.REAL, DateUtil.date());
+                                tradeMoneyService.saveMoneyHistory(userId, MockType.MOCK, begin);
+                                tradeMoneyService.saveMoneyHistory(userId, MockType.REAL, begin);
                             }
                     );
                     break;
@@ -404,6 +402,7 @@ public class JobInfoBusinessImpl implements JobInfoBusiness {
                                     userId -> {
                                         try {
                                             ConfigVo config = configService.getConfig(userId, ConfigCodeType.AUTO_LOGIN);
+                                            log.info("AUTO_LOGIN {} 开始执行", config);
                                             if (FunctionUseType.USE.getCode().equalsIgnoreCase(config.getCodeValue())) {
                                                 // 自动登录
                                                 autoLoginBusiness.autoLogin(userId);

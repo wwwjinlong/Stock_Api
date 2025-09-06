@@ -61,7 +61,7 @@ public class JobInfoServiceImpl implements JobInfoService {
         if (jobInfoDo == null) {
             return OutputResult.buildSucc();
         }
-        jobInfoDo.setUpdateTime(DateUtil.date().toLocalDateTime());
+        jobInfoDo.setUpdateTime(DateUtil.date());
         jobInfoDo.setTriggerStatus(dataFlagType.getCode());
         //进行更新
         jobInfoDomainService.updateById(jobInfoDo);

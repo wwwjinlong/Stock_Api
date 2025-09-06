@@ -3,7 +3,7 @@ package top.yueshushu.learn.entity;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -29,9 +29,9 @@ public class TradeUser implements Serializable {
 
     private String validateKey;
 
-    private LocalDateTime createTime;
+    private Date createTime;
 
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
     private Integer flag;
 

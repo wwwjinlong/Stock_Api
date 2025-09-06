@@ -9,7 +9,8 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
+
 
 /**
  * <p>
@@ -36,7 +37,7 @@ public class TradeMoneyHistoryDo implements Serializable {
      * 当天的日期不包括周六周天
      */
     @TableField("curr_date")
-    private LocalDateTime currDate;
+    private Date currDate;
     /**
      * 总金额
      */
@@ -78,6 +79,5 @@ public class TradeMoneyHistoryDo implements Serializable {
      */
     @TableField("mock_type")
     private Integer mockType;
-    
-    
+
 }

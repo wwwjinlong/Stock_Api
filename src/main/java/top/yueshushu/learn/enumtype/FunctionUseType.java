@@ -9,11 +9,11 @@ public enum FunctionUseType {
     /**
      * 正常
      */
-    USE("1", "不启用"),
+    USE("1", "启用"),
     /**
      * 删除
      */
-    DISABLE("0", "启用");
+    DISABLE("0", "不启用");
 
     private String code;
 

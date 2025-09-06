@@ -1,5 +1,6 @@
 package top.yueshushu.learn.business.impl;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -41,7 +42,6 @@ import top.yueshushu.learn.util.StockUtil;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -178,7 +178,7 @@ public class TradePositionBusinessImpl implements TradePositionBusiness {
         MockType mockType = MockType.MOCK;
         // 对金额等信息进行处理。  处理昨天的。
         // 默认是当天的。
-        Date currentDate = DateUtil.date();
+        DateTime currentDate = DateUtil.date();
 
         if (addPositionVo.getType() == 0) {
             currentDate = dateHelper.getBeforeLastWorking(DateUtil.offsetDay(currentDate, -1));

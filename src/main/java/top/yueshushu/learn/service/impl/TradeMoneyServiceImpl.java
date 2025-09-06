@@ -28,9 +28,6 @@ import top.yueshushu.learn.util.TradeUtil;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -120,12 +117,9 @@ public class TradeMoneyServiceImpl implements TradeMoneyService {
         if (tradeMoneyDo == null) {
             return;
         }
-        Instant instant = currentDate.toInstant();
-        ZoneId zoneId = ZoneId.systemDefault();
-        LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
+
         TradeMoneyHistoryDo tradeMoneyHistoryDo =
                 tradeMoneyHistoryAssembler.doToHis(tradeMoneyDo);
-        tradeMoneyHistoryDo.setCurrDate(localDateTime);
         tradeMoneyHistoryDomainService.save(tradeMoneyHistoryDo);
     }
 

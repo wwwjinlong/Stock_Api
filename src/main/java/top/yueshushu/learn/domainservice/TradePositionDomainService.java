@@ -3,6 +3,7 @@ package top.yueshushu.learn.domainservice;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.domain.TradePositionDo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +20,8 @@ public interface TradePositionDomainService extends IService<TradePositionDo> {
      * @return 根据用户编号和类型查询相应的持仓记录信息
      */
     List<TradePositionDo> listByUserIdAndMockTypeAndCode(Integer userId, Integer mockType, String code);
+
+    List<TradePositionDo> listByUserIdAndMockTypeAndCode(Integer userId, Integer mockType, Date begin);
 
     /**
      * 定时同步可用的股票数量

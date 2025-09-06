@@ -9,6 +9,7 @@ import top.yueshushu.learn.domainservice.TradePositionDomainService;
 import top.yueshushu.learn.mapper.TradePositionDoMapper;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +32,17 @@ public class TradePositionDomainServiceImpl extends ServiceImpl<TradePositionDoM
                 .eq(StringUtils.hasText(code),TradePositionDo::getCode,code)
                 .list();
     }
+
+
+    @Override
+    public List<TradePositionDo> listByUserIdAndMockTypeAndCode(Integer userId, Integer mockType, Date begin) {
+        return this.lambdaQuery()
+                .eq(TradePositionDo::getUserId, userId)
+                .eq(TradePositionDo::getMockType, mockType)
+                .gt(TradePositionDo::getUpdateTime, begin)
+                .list();
+    }
+
     @Override
     public void syncUseAmountByXxlJob() {
         // 删除可用数量为 0 的数据。

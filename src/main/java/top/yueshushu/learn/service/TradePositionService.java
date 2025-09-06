@@ -1,5 +1,6 @@
 package top.yueshushu.learn.service;
 
+import cn.hutool.core.date.DateTime;
 import top.yueshushu.learn.entity.TradePosition;
 import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.exception.TradeUserException;
@@ -7,7 +8,6 @@ import top.yueshushu.learn.mode.ro.TradePositionRo;
 import top.yueshushu.learn.mode.vo.TradePositionVo;
 import top.yueshushu.learn.response.OutputResult;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,7 +44,7 @@ public interface TradePositionService {
      * @param mock        类型
      * @param currentDate 要改变的日期
      */
-    void savePositionHistory(Integer userId, MockType mock, Date currentDate);
+    void savePositionHistory(Integer userId, MockType mock, DateTime currentDate);
 
     /**
      * 查询虚拟的股票持仓记录

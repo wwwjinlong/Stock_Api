@@ -7,7 +7,7 @@ import top.yueshushu.learn.domain.UserRoleDo;
 import top.yueshushu.learn.mapper.UserRoleMapper;
 import top.yueshushu.learn.service.UserRoleService;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +43,7 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRoleDo>
         UserRoleDo userRoleDo = new UserRoleDo();
         userRoleDo.setUserId(userId);
         userRoleDo.setRoleId(roleId);
-        userRoleDo.setCreateTime(LocalDateTime.now());
+        userRoleDo.setCreateTime(new Date());
         save(userRoleDo);
     }
 }
