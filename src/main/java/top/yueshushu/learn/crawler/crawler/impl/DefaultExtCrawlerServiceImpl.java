@@ -3,13 +3,23 @@ package top.yueshushu.learn.crawler.crawler.impl;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import top.yueshushu.learn.crawler.crawler.ExtCrawlerService;
-import top.yueshushu.learn.crawler.entity.*;
+import top.yueshushu.learn.crawler.entity.BKInfo;
+import top.yueshushu.learn.crawler.entity.BKMoneyInfo;
+import top.yueshushu.learn.crawler.entity.DBStockInfo;
+import top.yueshushu.learn.crawler.entity.StockBKStockInfo;
+import top.yueshushu.learn.crawler.entity.StockIndexInfo;
+import top.yueshushu.learn.crawler.entity.StockPoolInfo;
+import top.yueshushu.learn.crawler.entity.TxStockHistoryInfo;
 import top.yueshushu.learn.crawler.parse.StockInfoParser;
 import top.yueshushu.learn.crawler.properties.ExtendProperties;
 import top.yueshushu.learn.enumtype.BKType;
@@ -21,7 +31,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 默认的扩展程序
@@ -168,6 +181,49 @@ public class DefaultExtCrawlerServiceImpl implements ExtCrawlerService {
             log.error("获取版块列表出错", e);
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public JSONArray dataList(String fs) {
+        JSONArray allList = new JSONArray();
+        for (int i = 1; i < 100; i++) {
+            try {
+//                Thread.sleep(1000);
+                Map<String, Object> paramMap = new HashMap<>();
+                paramMap.put("np", 1);
+//                paramMap.put("fltt", 1);
+                paramMap.put("fs", fs);
+//                paramMap.put("fields", "f12,f13,f14,f1,f2,f4,f3,f152,f20,f8,f104,f105,f128,f140,f141,f207,f208,f209,f136,f222");
+//                paramMap.put("fid", "f3");
+                paramMap.put("pn", i);
+                paramMap.put("pz", 50);
+                paramMap.put("po", 1);
+                paramMap.put("dect", 1);
+                String response = HttpUtil.createGet("https://push2.eastmoney.com/api/qt/clist/get")
+                        .form(paramMap)
+                        .header("Accept", "*/*")
+                        .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                        .header("Cache-Control", "no-cache")
+                        .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36")
+                        .execute().body();
+                System.out.println(i);
+                if (!response.contains("diff")) {
+                    break;
+                }
+                JSONObject jsonObject = JSON.parseObject(response);
+                JSONArray list = jsonObject.getJSONObject("data").getJSONArray("diff");
+                if (org.apache.commons.collections.CollectionUtils.isEmpty(list)) {
+                    break;
+                }
+                allList.addAll(list);
+                TimeUnit.MILLISECONDS.sleep(500);
+//                System.out.println(response);
+            } catch (Exception e) {
+                log.error("dataList error", e);
+                break;
+            }
+        }
+        return allList;
     }
 
     private List<BKMoneyInfo> parseMoneyInfoList(String url, BKType bkType) {

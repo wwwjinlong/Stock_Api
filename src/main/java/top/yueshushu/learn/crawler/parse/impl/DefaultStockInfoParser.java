@@ -8,7 +8,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import top.yueshushu.learn.common.Const;
-import top.yueshushu.learn.crawler.entity.*;
+import top.yueshushu.learn.crawler.entity.BKInfo;
+import top.yueshushu.learn.crawler.entity.BKMoneyInfo;
+import top.yueshushu.learn.crawler.entity.DBStockInfo;
+import top.yueshushu.learn.crawler.entity.DownloadStockInfo;
+import top.yueshushu.learn.crawler.entity.StockBKStockInfo;
+import top.yueshushu.learn.crawler.entity.StockIndexInfo;
+import top.yueshushu.learn.crawler.entity.StockPoolInfo;
+import top.yueshushu.learn.crawler.entity.TxStockHistoryInfo;
 import top.yueshushu.learn.crawler.parse.StockInfoParser;
 import top.yueshushu.learn.enumtype.DBStockType;
 import top.yueshushu.learn.enumtype.StockCodeType;
@@ -19,7 +26,11 @@ import top.yueshushu.learn.util.MyDateUtil;
 import top.yueshushu.learn.util.StockUtil;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 股票转换信息实现
@@ -214,6 +225,21 @@ public class DefaultStockInfoParser implements StockInfoParser {
         );
         return result;
     }
+
+
+    @Override
+    public JSONArray parsePageList(String content, String code) {
+        //将内容转换成json
+        JSONObject jsonObject = JSONObject.parseObject(content);
+        //获取里面的data.diff 内容，是个列表对象
+        JSONObject data = jsonObject.getJSONObject("data");
+        if (ObjectUtils.isEmpty(data)) {
+            return null;
+        }
+        //获取里面的data.diff 内容，是个列表对象
+        return data.getJSONArray("diff");
+    }
+
 
     @Override
     public List<StockPoolInfo> parsePoolInfoList(String content, StockPoolType stockPoolType, Date currentDate) {

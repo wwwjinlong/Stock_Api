@@ -16,7 +16,13 @@ import top.yueshushu.learn.business.BKBusiness;
 import top.yueshushu.learn.business.StockPoolBusiness;
 import top.yueshushu.learn.crawler.crawler.CrawlerService;
 import top.yueshushu.learn.crawler.crawler.ExtCrawlerService;
-import top.yueshushu.learn.crawler.entity.*;
+import top.yueshushu.learn.crawler.entity.BKInfo;
+import top.yueshushu.learn.crawler.entity.BKMoneyInfo;
+import top.yueshushu.learn.crawler.entity.DBStockInfo;
+import top.yueshushu.learn.crawler.entity.HotStockInfo;
+import top.yueshushu.learn.crawler.entity.StockBKStockInfo;
+import top.yueshushu.learn.crawler.entity.StockIndexInfo;
+import top.yueshushu.learn.crawler.entity.StockPoolInfo;
 import top.yueshushu.learn.crawler.service.CrawlerStockHistoryService;
 import top.yueshushu.learn.enumtype.DBStockType;
 import top.yueshushu.learn.enumtype.StockCodeType;
@@ -26,7 +32,11 @@ import top.yueshushu.learn.mode.ro.StockBKMoneyStatRo;
 import top.yueshushu.learn.service.StockPoolHistoryService;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName:StockCacheTest
@@ -189,6 +199,12 @@ public class StockExtendTest {
 
     @Test
     public void stockBkStockTest() {
+        List<StockBKStockInfo> allBkList = extCrawlerService.findRelationBkListByCode("002415");
+        log.info(">>> 获取 版块信息: {}", allBkList);
+    }
+
+    @Test
+    public void stockBkStock2Test() {
         List<StockBKStockInfo> allBkList = extCrawlerService.findRelationBkListByCode("002415");
         log.info(">>> 获取 版块信息: {}", allBkList);
     }

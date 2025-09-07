@@ -21,6 +21,7 @@ import top.yueshushu.learn.domain.StockBkDo;
 import top.yueshushu.learn.domain.StockBkMoneyHistoryDo;
 import top.yueshushu.learn.domain.StockBkStockDo;
 import top.yueshushu.learn.domain.StockDo;
+import top.yueshushu.learn.domainservice.StockBkDomainService;
 import top.yueshushu.learn.domainservice.StockBkStockDomainService;
 import top.yueshushu.learn.domainservice.StockDomainService;
 import top.yueshushu.learn.enumtype.BKCharMoneyType;
@@ -29,19 +30,27 @@ import top.yueshushu.learn.enumtype.DBStockType;
 import top.yueshushu.learn.helper.DateHelper;
 import top.yueshushu.learn.mode.dto.StockBkCodeQueryDto;
 import top.yueshushu.learn.mode.ro.StockBKMoneyStatRo;
-import top.yueshushu.learn.mode.vo.*;
+import top.yueshushu.learn.mode.vo.DistVo;
+import top.yueshushu.learn.mode.vo.StockBKMoneyHistoryVo;
+import top.yueshushu.learn.mode.vo.StockBKVo;
+import top.yueshushu.learn.mode.vo.StockBkStockVo;
+import top.yueshushu.learn.mode.vo.StockBkTopDetailVo;
+import top.yueshushu.learn.mode.vo.StockBkTopVo;
 import top.yueshushu.learn.mode.vo.charinfo.LineSeriesVo;
 import top.yueshushu.learn.mode.vo.charinfo.LineVo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.response.PageResponse;
 import top.yueshushu.learn.service.StockBkMoneyHistoryService;
-import top.yueshushu.learn.service.StockBkService;
 import top.yueshushu.learn.util.BigDecimalUtil;
 import top.yueshushu.learn.util.PageUtil;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -55,7 +64,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BKBusinessImpl implements BKBusiness {
     @Resource
-    private StockBkService stockBkService;
+    private StockBkDomainService stockBkService;
     @Resource
     private StockBkMoneyHistoryService stockBkMoneyHistoryService;
     @Resource

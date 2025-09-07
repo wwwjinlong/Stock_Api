@@ -72,6 +72,12 @@ public class ExtendProperties implements Serializable {
     @Value("${extend.stockBkStock}")
     private String stockBkStockUrl;
 
+    /**
+     * 版块成分
+     */
+    @Value("${extend.bkStockList}")
+    private String bkStockList;
+
 
     /**
      * 打版的股票url

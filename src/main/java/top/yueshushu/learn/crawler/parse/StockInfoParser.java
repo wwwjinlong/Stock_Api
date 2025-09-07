@@ -1,5 +1,14 @@
 package top.yueshushu.learn.crawler.parse;
-import top.yueshushu.learn.crawler.entity.*;
+
+import com.alibaba.fastjson.JSONArray;
+import top.yueshushu.learn.crawler.entity.BKInfo;
+import top.yueshushu.learn.crawler.entity.BKMoneyInfo;
+import top.yueshushu.learn.crawler.entity.DBStockInfo;
+import top.yueshushu.learn.crawler.entity.DownloadStockInfo;
+import top.yueshushu.learn.crawler.entity.StockBKStockInfo;
+import top.yueshushu.learn.crawler.entity.StockIndexInfo;
+import top.yueshushu.learn.crawler.entity.StockPoolInfo;
+import top.yueshushu.learn.crawler.entity.TxStockHistoryInfo;
 import top.yueshushu.learn.enumtype.DBStockType;
 import top.yueshushu.learn.enumtype.StockPoolType;
 
@@ -56,6 +65,8 @@ public interface StockInfoParser {
     default List<StockBKStockInfo> parseBkStockList(String content, String code) {
         return Collections.EMPTY_LIST;
     }
+
+    JSONArray parsePageList(String content, String code);
 
     /**
      * 解析股票池信息

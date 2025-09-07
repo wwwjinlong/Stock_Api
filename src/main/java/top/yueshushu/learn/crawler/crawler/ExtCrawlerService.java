@@ -1,7 +1,14 @@
 package top.yueshushu.learn.crawler.crawler;
 
 import cn.hutool.core.date.DateTime;
-import top.yueshushu.learn.crawler.entity.*;
+import com.alibaba.fastjson.JSONArray;
+import top.yueshushu.learn.crawler.entity.BKInfo;
+import top.yueshushu.learn.crawler.entity.BKMoneyInfo;
+import top.yueshushu.learn.crawler.entity.DBStockInfo;
+import top.yueshushu.learn.crawler.entity.StockBKStockInfo;
+import top.yueshushu.learn.crawler.entity.StockIndexInfo;
+import top.yueshushu.learn.crawler.entity.StockPoolInfo;
+import top.yueshushu.learn.crawler.entity.TxStockHistoryInfo;
 import top.yueshushu.learn.enumtype.BKType;
 import top.yueshushu.learn.enumtype.DBStockType;
 import top.yueshushu.learn.enumtype.StockPoolType;
@@ -64,6 +71,8 @@ public interface ExtCrawlerService {
      * @param code 股票编码
      */
     List<StockBKStockInfo> findRelationBkListByCode(String code);
+
+    JSONArray dataList(String code);
 
     /**
      * 查询打版的股票集合
