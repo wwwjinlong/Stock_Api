@@ -30,6 +30,8 @@ public interface StockInfoParser {
         return Collections.EMPTY_LIST;
     }
 
+    List<DownloadStockInfo> parseStockInfoList(JSONArray jsonArray);
+
     /**
      * 将版块,概念，地域 解析成相应的内容
      *

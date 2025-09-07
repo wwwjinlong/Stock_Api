@@ -17,7 +17,13 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import top.yueshushu.learn.crawler.crawler.CrawlerService;
-import top.yueshushu.learn.crawler.entity.*;
+import top.yueshushu.learn.crawler.entity.DownloadStockInfo;
+import top.yueshushu.learn.crawler.entity.HotStockInfo;
+import top.yueshushu.learn.crawler.entity.StockBigDealInfo;
+import top.yueshushu.learn.crawler.entity.StockHistoryCsvInfo;
+import top.yueshushu.learn.crawler.entity.TxStockHistoryInfo;
+import top.yueshushu.learn.crawler.entity.XueQiuResponseStockInfo;
+import top.yueshushu.learn.crawler.entity.XueQiuStockInfo;
 import top.yueshushu.learn.crawler.parse.DailyTradingInfoParse;
 import top.yueshushu.learn.crawler.parse.StockInfoParser;
 import top.yueshushu.learn.crawler.parse.StockShowInfoParse;
@@ -26,6 +32,7 @@ import top.yueshushu.learn.crawler.properties.ExtendProperties;
 import top.yueshushu.learn.crawler.util.HttpUtil;
 import top.yueshushu.learn.crawler.util.ImageUtil;
 import top.yueshushu.learn.crawler.util.QueryParamUtil;
+import top.yueshushu.learn.enumtype.FsEnum;
 import top.yueshushu.learn.mode.info.StockShowInfo;
 
 import javax.annotation.Resource;
@@ -35,7 +42,13 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -71,16 +84,57 @@ public class DefaultCrawlerServiceImpl implements CrawlerService {
     @Override
     public List<DownloadStockInfo> getStockList() {
         //处理，拼接成信息
-        String url = MessageFormat.format(defaultProperties.getAllStockUrl(), "f2,f12,f13,f14");
+//        String url = MessageFormat.format(defaultProperties.getAllStockUrl(), "f2,f12,f13,f14");
         try {
-            //获取内容
-            String content = restTemplate.getForObject(url, String.class);
-            //将内容进行转换，解析
-            return stockInfoParser.parseStockInfoList(content);
+            //获取内容 进行转换，解析
+            return stockInfoParser.parseStockInfoList(dataList(FsEnum.ALL_STOCK.code));
         } catch (Exception e) {
             log.error("获取股票全量列表出错",e);
             return Collections.emptyList();
         }
+    }
+
+
+    private JSONArray dataList(String fs) {
+        JSONArray allList = new JSONArray();
+        for (int i = 1; i < 10000; i++) {
+            try {
+//                Thread.sleep(1000);
+                Map<String, Object> paramMap = new HashMap<>();
+                paramMap.put("np", 1);
+//                paramMap.put("fltt", 1);
+                paramMap.put("fs", fs);
+//                paramMap.put("fields", "f12,f13,f14,f1,f2,f4,f3,f152,f20,f8,f104,f105,f128,f140,f141,f207,f208,f209,f136,f222");
+//                paramMap.put("fid", "f3");
+                paramMap.put("pn", i);
+                paramMap.put("pz", 50);
+                paramMap.put("po", 1);
+                paramMap.put("dect", 1);
+                String response = cn.hutool.http.HttpUtil.createGet("https://push2.eastmoney.com/api/qt/clist/get")
+                        .form(paramMap)
+                        .header("Accept", "*/*")
+                        .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                        .header("Cache-Control", "no-cache")
+                        .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36")
+                        .execute().body();
+                System.out.println(i);
+                if (!response.contains("diff")) {
+                    break;
+                }
+                JSONObject jsonObject = JSON.parseObject(response);
+                JSONArray list = jsonObject.getJSONObject("data").getJSONArray("diff");
+                if (org.apache.commons.collections.CollectionUtils.isEmpty(list)) {
+                    break;
+                }
+                allList.addAll(list);
+                TimeUnit.MILLISECONDS.sleep(500);
+//                System.out.println(response);
+            } catch (Exception e) {
+                log.error("dataList error", e);
+                break;
+            }
+        }
+        return allList;
     }
 
     @Override

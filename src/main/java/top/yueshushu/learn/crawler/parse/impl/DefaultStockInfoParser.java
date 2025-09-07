@@ -78,6 +78,35 @@ public class DefaultStockInfoParser implements StockInfoParser {
 
 
     @Override
+    public List<DownloadStockInfo> parseStockInfoList(JSONArray jsonArray) {
+        if (jsonArray.size() <= 0) {
+            return Collections.emptyList();
+        }
+        //处理内容
+        List<DownloadStockInfo> result = new ArrayList<>(32);
+        jsonArray.forEach(
+                n -> {
+                    JSONObject tempObject = JSONObject.parseObject(n.toString());
+                    DownloadStockInfo downloadStockInfo = new DownloadStockInfo();
+                    downloadStockInfo.setCode(tempObject.getString("f12"));
+                    downloadStockInfo.setName(tempObject.getString("f14"));
+
+                    int type = tempObject.getInteger("f13");
+                    //进行处理
+                    downloadStockInfo.setExchange(type);
+                    //设置股票的全称
+                    downloadStockInfo.setFullCode(StockUtil.getFullCode(downloadStockInfo.getCode()));
+                    Integer price = tempObject.getInteger("f2");
+                    downloadStockInfo.setCanUse((price == null || price == 0) ? 0 : 1);
+
+                    result.add(downloadStockInfo);
+                }
+        );
+        return result;
+    }
+
+
+    @Override
     public List<BKInfo> parseBkInfoList(String content) {
         //将内容转换成json
         JSONObject jsonObject = JSONObject.parseObject(content);

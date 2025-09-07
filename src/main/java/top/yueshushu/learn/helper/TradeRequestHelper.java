@@ -331,7 +331,7 @@ public class TradeRequestHelper {
      * @return 请求信息
      */
     private Map<String, Object> getParams(Object request) {
-        Map<String, Object> beanMap = new BeanMap(request);
+        BeanMap beanMap = new BeanMap(request);
         HashMap<String, Object> params = new HashMap<>(10);
         beanMap.entrySet().stream().filter(entry -> !TradeApiServiceImpl.IgnoreList.contains(String.valueOf(entry.getKey())))
                 .forEach(entry -> params.put(String.valueOf(entry.getKey()), entry.getValue()));
